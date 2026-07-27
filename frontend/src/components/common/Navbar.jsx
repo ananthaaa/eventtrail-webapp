@@ -10,107 +10,155 @@ export const Navbar = () => {
   if (!user) return null;
 
   const navItems = [
-    { label: 'Home', path: '/home', icon: Compass },
-    { label: 'Map', path: '/map', icon: MapPin },
+    { label: 'Dashboard', path: '/home', icon: Compass },
+    { label: 'Events', path: '/home', icon: Calendar }, // Maps to catalog
+    { label: 'Event Map', path: '/map', icon: MapPin },
     { label: 'My Events', path: '/my-events', icon: Bookmark },
     { label: 'Notifications', path: '/notifications', icon: Bell },
     { label: 'Profile', path: '/profile', icon: User },
   ];
 
   if (user.role === 'ClubOrganizer' || user.role === 'Faculty' || user.role === 'Administrator') {
-    navItems.splice(1, 0, { label: 'Manage Events', path: '/manage', icon: Calendar });
+    navItems.splice(2, 0, { label: 'Manage Events', path: '/manage', icon: Calendar });
   }
 
   return (
     <>
-      {/* Top Desktop Navigation Bar */}
-      <header className="glass-navbar" style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      {/* Top Desktop Navigation Bar — Neobrutalist Vercel Style */}
+      <header className="glass-navbar" style={{
+        padding: '12px 32px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: '#FFFFFF',
+        borderBottom: '3px solid #000000',
+        boxShadow: '0 4px 0px 0px #000000',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000
+      }}>
+        {/* Logo */}
         <Link to="/home" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
           <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #6366F1 0%, #06B6D4 100%)',
+            width: '40px',
+            height: '40px',
+            borderRadius: '8px',
+            background: '#FFEB3B',
+            border: '2px solid #000000',
+            boxShadow: '2px 2px 0px 0px #000000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontWeight: 800,
+            fontWeight: 900,
             fontSize: '1.2rem',
-            color: '#fff',
-            boxShadow: '0 0 15px rgba(99,102,241,0.5)'
+            color: '#000000',
+            fontFamily: 'var(--font-heading)'
           }}>
-            E
+            ET
           </div>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px', color: '#F8FAFC' }}>
-            Event<span style={{ color: '#06B6D4' }}>Trail</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 900, letterSpacing: '-0.5px', color: '#000000', textTransform: 'uppercase' }}>
+            Event Trail
           </span>
           <span style={{
-            fontSize: '0.7rem',
-            background: 'rgba(99,102,241,0.2)',
-            color: '#818CF8',
-            padding: '2px 8px',
+            fontSize: '0.75rem',
+            background: '#E3F2FD',
+            color: '#000000',
+            padding: '2px 10px',
             borderRadius: '99px',
-            border: '1px solid rgba(99,102,241,0.3)',
-            fontWeight: 600,
-            marginLeft: '4px'
+            border: '2px solid #000000',
+            boxShadow: '2px 2px 0px 0px #000000',
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            marginLeft: '6px'
           }}>
             {user.role}
           </span>
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-          {navItems.map((item) => {
+        <nav style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {navItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive = location.pathname === item.path && (index === 0 ? location.pathname === '/home' : true);
             return (
               <Link
-                key={item.path}
+                key={`${item.path}-${index}`}
                 to={item.path}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  color: isActive ? '#fff' : '#94A3B8',
-                  fontWeight: isActive ? 600 : 500,
+                  color: '#000000',
+                  fontWeight: 800,
                   fontSize: '0.9rem',
-                  padding: '6px 12px',
+                  padding: '8px 16px',
                   borderRadius: '8px',
-                  background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  transition: 'all 0.2s ease',
-                  textDecoration: 'none'
+                  background: isActive ? '#E8F5E9' : 'transparent',
+                  border: isActive ? '2px solid #000000' : '2px solid transparent',
+                  boxShadow: isActive ? '2px 2px 0px 0px #000000' : 'none',
+                  transition: 'all 0.15s ease',
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.3px'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.border = '2px solid #000000';
+                    e.currentTarget.style.background = '#FFEB3B';
+                    e.currentTarget.style.boxShadow = '2px 2px 0px 0px #000000';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.border = '2px solid transparent';
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }
                 }}
               >
-                <Icon className="w-4 h-4" style={{ color: isActive ? '#06B6D4' : '#94A3B8' }} />
+                <Icon className="w-4 h-4" style={{ color: '#000000', strokeWidth: 2.5 }} />
                 <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* User Info & Logout */}
+        {/* User Info & Logout Button (Pastel Peach) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#F8FAFC' }}>{user.name}</span>
-            <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>{user.department || 'Campus Student'}</span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#000000', textTransform: 'uppercase' }}>{user.name}</span>
+            <span style={{ fontSize: '0.75rem', color: '#4B5563', fontWeight: 600 }}>{user.department || 'Campus Student'}</span>
           </div>
           <button
             onClick={logout}
             title="Log Out"
             style={{
-              background: 'rgba(239,68,68,0.15)',
-              border: '1px solid rgba(239,68,68,0.3)',
-              color: '#EF4444',
-              padding: '8px',
-              borderRadius: '10px',
+              background: '#FFE0B2',
+              border: '2px solid #000000',
+              boxShadow: '2px 2px 0px 0px #000000',
+              color: '#000000',
+              padding: '8px 14px',
+              borderRadius: '8px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s ease'
+              gap: '6px',
+              fontWeight: 800,
+              fontSize: '0.8rem',
+              textTransform: 'uppercase',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '4px 4px 0px 0px #000000';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '2px 2px 0px 0px #000000';
             }}
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4" style={{ strokeWidth: 2.5 }} />
+            <span>Logout</span>
           </button>
         </div>
       </header>
@@ -122,46 +170,60 @@ export const Navbar = () => {
           bottom: 0,
           left: 0,
           right: 0,
-          background: 'rgba(11, 15, 25, 0.92)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          padding: '8px 16px',
+          background: '#FFFFFF',
+          borderTop: '3px solid #000000',
+          padding: '8px 12px',
           display: 'flex',
           justifyContent: 'space-around',
           alignItems: 'center',
           zIndex: 1000,
-          boxShadow: '0 -10px 20px rgba(0,0,0,0.5)'
+          boxShadow: '0 -4px 0px 0px #000000'
         }}
         className="mobile-bottom-nav"
       >
-        {navItems.map((item) => {
+        {navItems.slice(0, 5).map((item, index) => {
           const Icon = item.icon;
-          const isActive = location.pathname.startsWith(item.path);
+          const isActive = location.pathname === item.path;
           return (
             <Link
-              key={item.path}
+              key={`mobile-${item.path}-${index}`}
               to={item.path}
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '4px',
-                color: isActive ? '#06B6D4' : '#64748B',
+                gap: '2px',
+                color: '#000000',
+                fontWeight: isActive ? 800 : 600,
                 fontSize: '0.7rem',
-                fontWeight: isActive ? 700 : 500,
+                padding: '6px 10px',
+                borderRadius: '6px',
+                background: isActive ? '#FFEB3B' : 'transparent',
+                border: isActive ? '2px solid #000000' : 'none',
+                boxShadow: isActive ? '2px 2px 0px 0px #000000' : 'none',
                 textDecoration: 'none',
-                minWidth: '44px',
-                minHeight: '44px',
-                justifyContent: 'center'
+                textTransform: 'uppercase'
               }}
             >
-              <Icon style={{ width: '20px', height: '20px', color: isActive ? '#06B6D4' : '#64748B' }} />
+              <Icon className="w-5 h-5" style={{ color: '#000000', strokeWidth: isActive ? 2.5 : 2 }} />
               <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
+      
+      <style>{`
+        @media (max-width: 768px) {
+          header.glass-navbar nav, header.glass-navbar > div {
+            display: none !important;
+          }
+        }
+        @media (min-width: 769px) {
+          .mobile-bottom-nav {
+            display: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 };

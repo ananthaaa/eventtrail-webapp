@@ -1,26 +1,31 @@
 /* ==========================================
-   EventTrail (CampusPulse) — Didasko Aesthetic
-   Premium Vanilla CSS Design System & Tokens
+   EventTrail — Neobrutalist Design System
+   Exact Vercel Reference Blueprint Styling
    ========================================== */
 
 :root {
-  /* Color Palette — Curated Dark Mode & Vibrant Gradients */
-  --bg-primary: #0B0F19;
-  --bg-secondary: #111827;
-  --bg-surface: rgba(22, 28, 45, 0.75);
-  --bg-card: rgba(30, 41, 59, 0.65);
-  --bg-card-hover: rgba(51, 65, 85, 0.75);
+  /* Neobrutalist Theme Variables */
+  --bg-primary: #FAF9F6;
+  --bg-secondary: #FFF9F0;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFFDE7;
   
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  --text-primary: #000000;
+  --text-secondary: #374151;
+  --text-muted: #6B7280;
   
-  --color-primary: #6366F1;
-  --color-primary-hover: #4F46E5;
-  --color-primary-glow: rgba(99, 102, 241, 0.35);
-  
-  --color-accent: #06B6D4;
-  --color-accent-glow: rgba(6, 182, 212, 0.35);
+  /* Vibrant Pastel Accent Palette */
+  --color-primary: #FFEB3B;      /* Accent Yellow for main CTAs */
+  --color-primary-hover: #FDD835;
+  --color-mint: #E8F5E9;         /* Active tabs / Success */
+  --color-mint-border: #4CAF50;
+  --color-peach: #FFE0B2;        /* Secondary warnings / Logout / Highlights */
+  --color-peach-border: #FF9800;
+  --color-blue: #E3F2FD;         /* Badges / Roster actions */
+  --color-blue-border: #2196F3;
+  --color-lavender: #EDE7F6;     /* Special tags */
+  --color-lavender-border: #673AB7;
   
   --color-success: #10B981;
   --color-warning: #F59E0B;
@@ -30,19 +35,21 @@
   --font-heading: 'Epilogue', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Glassmorphism & Shadows */
-  --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), 0 8px 15px -6px rgba(0, 0, 0, 0.4);
-  --glow-shadow: 0 0 25px var(--color-primary-glow);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-  --glass-border-highlight: 1px solid rgba(255, 255, 255, 0.18);
+  /* Neobrutalist Borders & Hard Shadows (Zero Blur) */
+  --neo-border: 2px solid #000000;
+  --neo-border-thick: 3px solid #000000;
+  --neo-shadow-sm: 2px 2px 0px 0px #000000;
+  --neo-shadow: 4px 4px 0px 0px #000000;
+  --neo-shadow-lg: 6px 6px 0px 0px #000000;
+  --neo-shadow-hover: 6px 6px 0px 0px #000000;
+  --neo-shadow-active: 1px 1px 0px 0px #000000;
 
   /* Radii & Transitions */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-full: 9999px;
-  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ==========================================
@@ -62,118 +69,99 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
-  background-attachment: fixed;
+    radial-gradient(#000000 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -19px -19px;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
-  line-height: 1.25;
+  line-height: 1.2;
   letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
 
 a {
-  color: var(--color-accent);
+  color: #000000;
   text-decoration: none;
   transition: var(--transition-fast);
 }
-a:hover {
-  color: var(--text-primary);
-}
 
 /* ==========================================
-   Glassmorphism Utility Classes
+   Neobrutalist Card & Utility Classes
    ========================================== */
-.glass-card {
+.glass-card, .neo-card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--card-shadow);
-  transition: var(--transition-smooth);
+  border: var(--neo-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--neo-shadow);
+  transition: var(--transition-fast);
+  color: var(--text-primary);
 }
-.glass-card:hover {
+.glass-card:hover, .neo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--neo-shadow-lg);
   background: var(--bg-card-hover);
-  border: var(--glass-border-highlight);
-  transform: translateY(-3px);
-  box-shadow: var(--glow-shadow);
+}
+
+.neo-box {
+  background: #FFFFFF;
+  border: var(--neo-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--neo-shadow);
+  padding: 24px;
+}
+
+.neo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 2px solid #000000;
+  border-radius: 99px;
+  box-shadow: 2px 2px 0px 0px #000000;
+  color: #000000;
 }
 
 .glass-navbar {
-  background: rgba(11, 15, 25, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: var(--glass-border);
+  background: #FFFFFF !important;
+  border-bottom: 3px solid #000000 !important;
+  box-shadow: 0 4px 0px 0px #000000 !important;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.glass-modal {
-  background: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: var(--glass-border-highlight);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
-}
-
 /* ==========================================
-   Interactive Micro-Animations
-   ========================================== */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.02); }
-}
-
-.animate-pulse {
-  animation: pulse-glow 3s infinite ease-in-out;
-}
-
-/* ==========================================
-   Form Controls & UI Elements
+   Form Elements
    ========================================== */
 .input-field {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #FFFFFF;
+  border: var(--neo-border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 0.95rem;
+  font-weight: 600;
+  box-shadow: var(--neo-shadow-sm);
   transition: var(--transition-fast);
   outline: none;
 }
 .input-field:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-  background: rgba(15, 23, 42, 0.95);
-}
-.input-field::placeholder {
-  color: var(--text-muted);
+  background: var(--color-primary);
+  border-color: #000000;
+  box-shadow: var(--neo-shadow);
+  transform: translateY(-1px);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: var(--radius-full);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
-
-/* Layout Utilities */
+/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;

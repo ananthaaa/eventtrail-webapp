@@ -1,162 +1,258 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button';
-import { Bookmark, Clock, MapPin, AlertCircle, ArrowRight } from 'lucide-react';
+import { Clock, MapPin, Ticket } from 'lucide-react';
 
 export const MyEvents = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming' | 'waitlisted' | 'past'
 
-  const myRsvps = {
+  if (!user) return null;
+
+  const rsvpRecords = {
     upcoming: [
       {
-        id: 'rsvp-1',
+        id: 'rsvp-001',
         title: 'KTU TechFest 2026 — Cloud & AI Summit',
         club: 'ASIET Computer Society',
         date: 'Oct 20, 2026 • 10:00 AM',
         location: 'Main Auditorium, Block A',
+        ticketId: 'TKT-9942-AWS',
         status: 'Confirmed',
-        ticketId: 'TKT-8849'
-      }
-    ],
-    waitlisted: [
+        statusColor: '#E8F5E9',
+        badgeBg: '#FFEB3B',
+        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80'
+      },
       {
-        id: 'rsvp-2',
+        id: 'rsvp-002',
         title: 'Campus Hackathon 3.0 — 24 Hour Build',
         club: 'Innovation & Entrepreneurship Cell',
         date: 'Oct 22, 2026 • 05:00 PM',
         location: 'Seminar Hall, MCA Block',
+        ticketId: 'TKT-8831-HACK',
+        status: 'Confirmed',
+        statusColor: '#E8F5E9',
+        badgeBg: '#E8F5E9',
+        image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80'
+      }
+    ],
+    waitlisted: [
+      {
+        id: 'rsvp-003',
+        title: 'Pixel Craft: UI/UX Masterclass',
+        club: 'DevX Guild',
+        date: 'Nov 05, 2026 • 02:00 PM',
+        location: 'Design Studio 1, Block B',
+        ticketId: 'WTL-1049-UI',
         status: 'Waitlisted #3',
-        ticketId: 'WL-0104'
+        statusColor: '#FFE0B2',
+        badgeBg: '#FFE0B2',
+        image: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80'
       }
     ],
     past: [
       {
-        id: 'rsvp-3',
-        title: 'Intro to AWS Serverless Architecture',
-        club: 'Cloud Computing Cell',
-        date: 'Sep 14, 2026 • 02:00 PM',
-        location: 'Lab 4, Block C',
+        id: 'rsvp-004',
+        title: 'AWS Serverless Workshop 2025',
+        club: 'Cloud Computing Club',
+        date: 'Sep 10, 2025 • 10:00 AM',
+        location: 'CS Lab 2',
+        ticketId: 'TKT-1002-OLD',
         status: 'Attended',
-        ticketId: 'TKT-1102'
+        statusColor: '#E3F2FD',
+        badgeBg: '#E3F2FD',
+        image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80'
       }
     ]
   };
 
-  const currentList = myRsvps[activeTab] || [];
+  const currentList = rsvpRecords[activeTab] || [];
 
   return (
-    <div className="container" style={{ padding: '32px 20px', paddingBottom: '96px' }}>
+    <div className="container" style={{ padding: '36px 20px', paddingBottom: '96px', background: '#FAF9F6', minHeight: 'calc(100vh - 65px)' }}>
       
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-        <Bookmark className="w-6 h-6 text-[#6366F1]" />
-        <span style={{ color: '#818CF8', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase' }}>
-          Personal Record
-        </span>
-      </div>
-      <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '24px' }}>
-        My Event RSVPs
-      </h1>
-
-      {/* Tabs */}
+      {/* Header */}
       <div style={{
+        background: '#FFFFFF',
+        border: '3px solid #000000',
+        boxShadow: '6px 6px 0px 0px #000000',
+        borderRadius: '12px',
+        padding: '24px 32px',
+        marginBottom: '32px',
         display: 'flex',
-        gap: '12px',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-        paddingBottom: '16px',
-        marginBottom: '28px'
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '20px'
       }}>
-        {[
-          { key: 'upcoming', label: 'Upcoming (1)', color: '#10B981' },
-          { key: 'waitlisted', label: 'Waitlisted (1)', color: '#F59E0B' },
-          { key: 'past', label: 'Past Events (1)', color: '#64748B' }
-        ].map((tab) => (
+        <div>
+          <span className="neo-badge" style={{ background: '#FFEB3B', marginBottom: '8px' }}>
+            <Ticket className="w-3.5 h-3.5" style={{ strokeWidth: 2.5 }} /> My Ticket Wallet
+          </span>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginTop: '6px' }}>
+            YOUR CAMPUS RSVPS & TICKETS
+          </h1>
+          <p style={{ color: '#374151', fontWeight: 600, fontSize: '0.95rem', marginTop: '4px' }}>
+            Manage upcoming campus event registrations, view QR passes, and track waitlisted seats.
+          </p>
+        </div>
+
+        {/* Tab Selection */}
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => setActiveTab('upcoming')}
             style={{
               padding: '10px 20px',
-              borderRadius: '12px',
-              background: activeTab === tab.key ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-              color: activeTab === tab.key ? '#fff' : '#94A3B8',
-              fontWeight: activeTab === tab.key ? 700 : 500,
-              fontSize: '0.95rem',
+              borderRadius: '8px',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              textTransform: 'uppercase',
+              border: '2px solid #000000',
+              background: activeTab === 'upcoming' ? '#E8F5E9' : '#FFFFFF',
+              color: '#000000',
+              boxShadow: activeTab === 'upcoming' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              border: activeTab === tab.key ? '1px solid rgba(99,102,241,0.4)' : '1px solid transparent'
+              transition: 'all 0.15s ease'
             }}
           >
-            {tab.label}
+            Upcoming ({rsvpRecords.upcoming.length})
           </button>
-        ))}
+          <button
+            onClick={() => setActiveTab('waitlisted')}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              textTransform: 'uppercase',
+              border: '2px solid #000000',
+              background: activeTab === 'waitlisted' ? '#FFE0B2' : '#FFFFFF',
+              color: '#000000',
+              boxShadow: activeTab === 'waitlisted' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            Waitlisted ({rsvpRecords.waitlisted.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('past')}
+            style={{
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              textTransform: 'uppercase',
+              border: '2px solid #000000',
+              background: activeTab === 'past' ? '#E3F2FD' : '#FFFFFF',
+              color: '#000000',
+              boxShadow: activeTab === 'past' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            Past ({rsvpRecords.past.length})
+          </button>
+        </div>
       </div>
 
-      {/* Event Cards */}
+      {/* Ticket Cards Grid */}
       {currentList.length === 0 ? (
-        <div className="glass-card" style={{ padding: '48px', textAlign: 'center', color: '#94A3B8' }}>
-          <AlertCircle className="w-10 h-10 mx-auto mb-12 text-slate-500" style={{ margin: '0 auto 16px' }} />
-          <h3 style={{ fontSize: '1.2rem', color: '#F8FAFC', marginBottom: '8px' }}>
-            No RSVPs in this tab yet
+        <div style={{
+          background: '#FFFFFF',
+          border: '3px solid #000000',
+          boxShadow: '6px 6px 0px 0px #000000',
+          borderRadius: '12px',
+          padding: '48px 24px',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#000', textTransform: 'uppercase', marginBottom: '8px' }}>
+            No {activeTab} events found
           </h3>
-          <p style={{ fontSize: '0.9rem', marginBottom: '20px' }}>
-            Explore campus events and tap "Instant RSVP" to secure your seat.
+          <p style={{ color: '#4B5563', fontWeight: 600, marginBottom: '20px' }}>
+            You haven't registered for any events in this category yet. Head to the Events Dashboard to explore live campus happenings!
           </p>
-          <Button variant="primary" size="md">
-            <span>Discover Events</span>
+          <Button variant="primary">
+            Explore Campus Events
           </Button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {currentList.map((item) => (
-            <div key={item.id} className="glass-card" style={{
-              padding: '24px',
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '20px'
-            }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '0.8rem', color: '#818CF8', fontWeight: 600 }}>
-                    {item.club}
-                  </span>
-                  <span style={{
-                    fontSize: '0.75rem',
-                    padding: '2px 10px',
-                    borderRadius: '99px',
-                    fontWeight: 700,
-                    background: item.status === 'Confirmed' ? 'rgba(16,185,129,0.15)' : item.status.includes('Waitlisted') ? 'rgba(245,158,11,0.15)' : 'rgba(100,116,139,0.15)',
-                    color: item.status === 'Confirmed' ? '#10B981' : item.status.includes('Waitlisted') ? '#F59E0B' : '#94A3B8',
-                    border: `1px solid ${item.status === 'Confirmed' ? 'rgba(16,185,129,0.3)' : item.status.includes('Waitlisted') ? 'rgba(245,158,11,0.3)' : 'rgba(100,116,139,0.3)'}`
-                  }}>
-                    {item.status}
-                  </span>
-                </div>
-
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#F8FAFC', marginBottom: '10px' }}>
-                  {item.title}
-                </h3>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', color: '#94A3B8', fontSize: '0.85rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Clock className="w-4 h-4 text-[#06B6D4]" />
-                    <span>{item.date}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin className="w-4 h-4 text-[#06B6D4]" />
-                    <span>{item.location}</span>
-                  </div>
-                </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '28px' }}>
+          {currentList.map((evt) => (
+            <div
+              key={evt.id}
+              style={{
+                background: '#FFFFFF',
+                border: '3px solid #000000',
+                boxShadow: '6px 6px 0px 0px #000000',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              {/* Top Banner */}
+              <div style={{
+                background: evt.badgeBg,
+                borderBottom: '3px solid #000000',
+                padding: '16px 20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontWeight: 900, fontSize: '0.9rem', color: '#000', textTransform: 'uppercase' }}>
+                  {evt.club}
+                </span>
+                <span className="neo-badge" style={{ background: '#FFF', padding: '4px 10px' }}>
+                  {evt.status}
+                </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ textAlign: 'right', marginRight: '8px' }}>
-                  <div style={{ fontSize: '0.75rem', color: '#64748B' }}>Ticket Ref</div>
-                  <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: '#E2E8F0', fontSize: '0.95rem' }}>{item.ticketId}</div>
+              {/* Card Body */}
+              <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '14px', flex: 1 }}>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', lineHeight: 1.2 }}>
+                  {evt.title}
+                </h3>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem', color: '#374151', fontWeight: 700 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Clock className="w-4 h-4" style={{ color: '#2196F3', strokeWidth: 2.5 }} />
+                    <span>{evt.date}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <MapPin className="w-4 h-4" style={{ color: '#EF4444', strokeWidth: 2.5 }} />
+                    <span>{evt.location}</span>
+                  </div>
                 </div>
-                <Button variant="secondary" size="md">
-                  <span>View Pass</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
+
+                {/* Ticket Reference Footer */}
+                <div style={{
+                  marginTop: 'auto',
+                  paddingTop: '16px',
+                  borderTop: '2px solid #E5E7EB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px'
+                }}>
+                  <div>
+                    <div style={{ fontSize: '0.7rem', color: '#6B7280', fontWeight: 700, textTransform: 'uppercase' }}>Ticket Reference</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#000', fontFamily: 'monospace' }}>{evt.ticketId}</div>
+                  </div>
+                  {activeTab === 'upcoming' ? (
+                    <Button variant="primary" size="sm">
+                      View Ticket QR
+                    </Button>
+                  ) : activeTab === 'waitlisted' ? (
+                    <Button variant="secondary" size="sm">
+                      Check Position
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="sm" style={{ border: '2px solid #000' }}>
+                      Feedback
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

@@ -1,171 +1,195 @@
 import React, { useState } from 'react';
-import { MapPin, Navigation, Layers, Compass, Building, CheckCircle2 } from 'lucide-react';
+import { Button } from '../../components/common/Button';
+import { MapPin, Navigation, Compass, Layers, Building, Info } from 'lucide-react';
 
 export const CampusMap = () => {
-  const [mode, setMode] = useState('outdoor'); // 'outdoor' | 'indoor'
-  const [selectedVenue, setSelectedVenue] = useState('auditorium');
+  const [mapMode, setMapMode] = useState('outdoor'); // 'outdoor' | 'indoor'
+  const [selectedVenue, setSelectedVenue] = useState('Auditorium');
 
   const venues = [
-    { id: 'auditorium', name: 'Main Auditorium, Block A', type: 'Indoor / Event Hall', floor: 'Ground Floor', status: 'Available' },
-    { id: 'mca-seminar', name: 'Seminar Hall, MCA Block', type: 'Lecture Hall', floor: '2nd Floor', status: 'In Use' },
-    { id: 'amphitheatre', name: 'Open Air Amphitheatre', type: 'Outdoor Stage', floor: 'Campus Center', status: 'Available' },
-    { id: 'library-ai', name: 'Central Library AI Lab', type: 'Computer Lab', floor: '1st Floor', status: 'Available' }
+    { id: 'v1', name: 'Main Auditorium', building: 'Block A, Floor 1', type: 'Event Hall', color: '#FFEB3B' },
+    { id: 'v2', name: 'Seminar Hall 1', building: 'MCA Block, Floor 2', type: 'Conference Room', color: '#E8F5E9' },
+    { id: 'v3', name: 'CS Dept Lab 3', building: 'Block B, Floor 3', type: 'Laboratory', color: '#E3F2FD' },
+    { id: 'v4', name: 'Open Air Theatre', building: 'Central Campus Ground', type: 'Outdoor Stage', color: '#FFE0B2' },
   ];
 
   return (
-    <div className="container" style={{ padding: '32px 20px', paddingBottom: '96px' }}>
+    <div className="container" style={{ padding: '36px 20px', paddingBottom: '96px', background: '#FAF9F6', minHeight: 'calc(100vh - 65px)' }}>
       
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', gap: '16px' }}>
+      {/* Header Bar */}
+      <div style={{
+        background: '#FFFFFF',
+        border: '3px solid #000000',
+        boxShadow: '6px 6px 0px 0px #000000',
+        borderRadius: '12px',
+        padding: '24px 32px',
+        marginBottom: '32px',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '20px'
+      }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <Compass className="w-5 h-5 text-[#06B6D4]" />
-            <span style={{ color: '#06B6D4', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase' }}>
-              Didasko Wayfinding
+          <span className="neo-badge" style={{ background: '#FFEB3B', marginBottom: '8px' }}>
+            <Compass className="w-3.5 h-3.5" style={{ strokeWidth: 2.5 }} /> Interactive Wayfinding
+          </span>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginTop: '6px' }}>
+            ASIET CAMPUS & VENUE MAPS
+          </h1>
+          <p style={{ color: '#374151', fontWeight: 600, fontSize: '0.95rem', marginTop: '4px' }}>
+            Toggle between outdoor GPS wayfinding across campus buildings and room-level indoor floor plans.
+          </p>
+        </div>
+
+        {/* Mode Toggle Buttons */}
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <Button
+            variant={mapMode === 'outdoor' ? 'primary' : 'ghost'}
+            onClick={() => setMapMode('outdoor')}
+            style={{ border: '2px solid #000' }}
+          >
+            <MapPin className="w-4 h-4" /> Outdoor Routes
+          </Button>
+          <Button
+            variant={mapMode === 'indoor' ? 'mint' : 'ghost'}
+            onClick={() => setMapMode('indoor')}
+            style={{ border: '2px solid #000' }}
+          >
+            <Layers className="w-4 h-4" /> Indoor Floor Plans
+          </Button>
+        </div>
+      </div>
+
+      {/* Map Content Split Layout */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'start' }}>
+        
+        {/* Left Column: Venue Selector & Routing */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          
+          <div style={{
+            background: '#FFFFFF',
+            border: '3px solid #000000',
+            boxShadow: '6px 6px 0px 0px #000000',
+            borderRadius: '12px',
+            padding: '24px'
+          }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Building className="w-5 h-5" style={{ color: '#000', strokeWidth: 2.5 }} /> Select Destination Venue
+            </h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {venues.map((v) => {
+                const isSelected = selectedVenue === v.name;
+                return (
+                  <div
+                    key={v.id}
+                    onClick={() => setSelectedVenue(v.name)}
+                    style={{
+                      padding: '16px',
+                      background: isSelected ? '#FFFDE7' : '#FFFFFF',
+                      border: '2px solid #000000',
+                      boxShadow: isSelected ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 900, fontSize: '1.05rem', color: '#000000', textTransform: 'uppercase' }}>{v.name}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#4B5563', fontWeight: 700 }}>{v.building}</div>
+                    </div>
+                    <span className="neo-badge" style={{ background: v.color }}>{v.type}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Button variant="primary" style={{ width: '100%', marginTop: '20px', padding: '14px' }}>
+              <Navigation className="w-4 h-4" /> Compute Shortest Route
+            </Button>
+          </div>
+
+          {/* Info Card */}
+          <div style={{
+            background: '#E3F2FD',
+            border: '3px solid #000000',
+            boxShadow: '6px 6px 0px 0px #000000',
+            borderRadius: '12px',
+            padding: '20px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'flex-start'
+          }}>
+            <Info className="w-6 h-6" style={{ color: '#000', strokeWidth: 2.5, flexShrink: 0 }} />
+            <div>
+              <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#000', textTransform: 'uppercase', marginBottom: '4px' }}>
+                Module 3 Ready
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 600, lineHeight: 1.5 }}>
+                Leaflet.js mapping canvas with custom SVG waypoint overlays. Ready for GPS routing and indoor floor graph integration.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Right Column: Interactive Map Preview Box */}
+        <div style={{
+          background: '#FFFFFF',
+          border: '3px solid #000000',
+          boxShadow: '6px 6px 0px 0px #000000',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          minHeight: '500px',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <div style={{ background: '#FFEB3B', borderBottom: '3px solid #000000', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontWeight: 900, fontSize: '1rem', color: '#000', textTransform: 'uppercase' }}>
+              Live Map View • {mapMode === 'outdoor' ? 'ASIET Campus GPS' : 'Indoor Floor Graph'}
+            </span>
+            <span className="neo-badge" style={{ background: '#FFF', padding: '2px 10px', fontSize: '0.7rem' }}>
+              Target: {selectedVenue}
             </span>
           </div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>
-            ASIET Campus Map
-          </h1>
-        </div>
 
-        {/* Outdoor / Indoor Toggle */}
-        <div style={{
-          display: 'inline-flex',
-          background: 'rgba(15, 23, 42, 0.8)',
-          padding: '6px',
-          borderRadius: '12px',
-          border: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          <button
-            onClick={() => setMode('outdoor')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: 'none',
-              background: mode === 'outdoor' ? '#6366F1' : 'transparent',
-              color: mode === 'outdoor' ? '#fff' : '#94A3B8',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <Navigation className="w-4 h-4" />
-            <span>Outdoor Route</span>
-          </button>
-          <button
-            onClick={() => setMode('indoor')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: 'none',
-              background: mode === 'indoor' ? '#06B6D4' : 'transparent',
-              color: mode === 'indoor' ? '#000' : '#94A3B8',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <Layers className="w-4 h-4" />
-            <span>Indoor Floor Plans</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Map Viewport Preview */}
-      <div className="glass-card" style={{
-        position: 'relative',
-        height: '420px',
-        borderRadius: '24px',
-        overflow: 'hidden',
-        marginBottom: '32px',
-        border: '1px solid rgba(255,255,255,0.15)',
-        background: 'radial-gradient(circle at 50% 50%, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.95) 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: '24px'
-      }}>
-        {/* Placeholder Simulated Leaflet Canvas */}
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.15, backgroundImage: 'radial-gradient(#6366F1 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }}></div>
-
-        <div style={{ position: 'relative', zIndex: 10, maxWidth: '500px' }}>
           <div style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '50%',
-            background: mode === 'outdoor' ? 'rgba(99,102,241,0.2)' : 'rgba(6,182,212,0.2)',
-            border: `2px solid ${mode === 'outdoor' ? '#6366F1' : '#06B6D4'}`,
-            display: 'inline-flex',
+            flex: 1,
+            background: 'url("https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1200&q=80") center/cover',
+            position: 'relative',
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: mode === 'outdoor' ? '#818CF8' : '#06B6D4',
-            marginBottom: '16px',
-            boxShadow: '0 0 30px rgba(99,102,241,0.3)'
+            minHeight: '420px'
           }}>
-            <MapPin className="w-8 h-8 animate-pulse" />
-          </div>
-
-          <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '8px', color: '#F8FAFC' }}>
-            {mode === 'outdoor' ? 'Leaflet.js OpenRouteService Canvas' : 'Indoor Floor-Plan Navigation Active'}
-          </h3>
-          <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginBottom: '20px' }}>
-            {mode === 'outdoor'
-              ? 'Real-time GPS turn-by-turn routing across ASIET campus walkways and entrance gates.'
-              : 'Multi-floor room highlighted path from building entrance to seminar halls.'}
-          </p>
-
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '99px', background: 'rgba(16,185,129,0.15)', color: '#10B981', fontSize: '0.85rem', fontWeight: 600 }}>
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Module 5 Wayfinding Ready</span>
+            <div style={{
+              background: '#FFFFFF',
+              border: '3px solid #000000',
+              boxShadow: '6px 6px 0px 0px #000000',
+              padding: '24px',
+              borderRadius: '12px',
+              textAlign: 'center',
+              maxWidth: '340px'
+            }}>
+              <MapPin className="w-12 h-12" style={{ color: '#EF4444', margin: '0 auto 12px', strokeWidth: 2.5 }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#000', textTransform: 'uppercase', marginBottom: '8px' }}>
+                {selectedVenue}
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: '#4B5563', fontWeight: 600, marginBottom: '16px' }}>
+                Leaflet canvas initialized. Click below to simulate step-by-step navigation instructions.
+              </p>
+              <Button variant="mint" size="sm" style={{ width: '100%' }}>
+                Start Guided Navigation
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Venue List */}
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px' }}>
-        Campus Venues & Rooms
-      </h3>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-        {venues.map((vn) => (
-          <div
-            key={vn.id}
-            onClick={() => setSelectedVenue(vn.id)}
-            className="glass-card"
-            style={{
-              padding: '20px',
-              cursor: 'pointer',
-              border: selectedVenue === vn.id ? '2px solid #06B6D4' : '1px solid rgba(255,255,255,0.08)',
-              background: selectedVenue === vn.id ? 'rgba(6,182,212,0.1)' : 'rgba(30,41,59,0.5)',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.1)', color: '#E2E8F0', padding: '4px 8px', borderRadius: '6px', fontWeight: 600 }}>
-                {vn.type}
-              </span>
-              <span style={{ fontSize: '0.75rem', color: vn.status === 'Available' ? '#10B981' : '#F59E0B', fontWeight: 700 }}>
-                • {vn.status}
-              </span>
-            </div>
-            <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#F8FAFC', marginBottom: '6px' }}>
-              {vn.name}
-            </h4>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94A3B8', fontSize: '0.8rem' }}>
-              <Building className="w-4 h-4" />
-              <span>{vn.floor}</span>
-            </div>
-          </div>
-        ))}
       </div>
-
     </div>
   );
 };

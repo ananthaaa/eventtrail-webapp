@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button';
-import { MapPin, Users, Sparkles, Flame, Clock, ArrowRight, Search, Filter } from 'lucide-react';
+import { MapPin, Sparkles, Flame, Clock, ArrowRight, Search, Filter } from 'lucide-react';
 
 export const StudentHome = () => {
   const { user } = useAuth();
@@ -21,6 +21,7 @@ export const StudentHome = () => {
       location: 'Main Auditorium, Block A',
       seats: '42 / 150 seats left',
       category: 'Technical',
+      badgeBg: '#FFEB3B',
       image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80',
       featured: true
     },
@@ -32,6 +33,7 @@ export const StudentHome = () => {
       location: 'Seminar Hall, MCA Block',
       seats: '8 / 50 seats left',
       category: 'Hackathon',
+      badgeBg: '#E8F5E9',
       image: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80',
       featured: true
     },
@@ -43,7 +45,32 @@ export const StudentHome = () => {
       location: 'Open Air Amphitheatre',
       seats: 'Open Admission',
       category: 'Cultural',
+      badgeBg: '#FFE0B2',
       image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80',
+      featured: false
+    },
+    {
+      id: 'evt-104',
+      title: 'Pixel Craft: UI/UX Workshop',
+      club: 'DevX Guild',
+      date: 'Oct 28, 2026 • 02:00 PM',
+      location: 'Design Studio 2, Block B',
+      seats: '15 / 40 seats left',
+      category: 'Workshops',
+      badgeBg: '#E3F2FD',
+      image: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=800&q=80',
+      featured: false
+    },
+    {
+      id: 'evt-105',
+      title: 'Inter-Faculty Football Finals',
+      club: 'ASIET Sports Association',
+      date: 'Nov 02, 2026 • 04:30 PM',
+      location: 'Main College Ground',
+      seats: 'Open Stadium',
+      category: 'Sports',
+      badgeBg: '#EDE7F6',
+      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
       featured: false
     }
   ];
@@ -55,14 +82,16 @@ export const StudentHome = () => {
   });
 
   return (
-    <div className="container" style={{ padding: '32px 20px', paddingBottom: '96px' }}>
+    <div className="container" style={{ padding: '36px 20px', paddingBottom: '96px', background: '#FAF9F6', minHeight: 'calc(100vh - 65px)' }}>
       
-      {/* Welcome Banner */}
-      <div className="glass-card" style={{
+      {/* Neobrutalist Welcome Box */}
+      <div style={{
         padding: '32px',
-        marginBottom: '32px',
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%)',
-        border: '1px solid rgba(255,255,255,0.15)',
+        marginBottom: '36px',
+        background: '#FFFFFF',
+        border: '3px solid #000000',
+        boxShadow: '6px 6px 0px 0px #000000',
+        borderRadius: '12px',
         display: 'flex',
         flexWrap: 'wrap',
         alignItems: 'center',
@@ -70,181 +99,233 @@ export const StudentHome = () => {
         gap: '20px'
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <span style={{
-              background: '#06B6D4',
-              color: '#000',
-              fontWeight: 800,
-              fontSize: '0.7rem',
-              padding: '2px 8px',
-              borderRadius: '99px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>
-              Module 1 Verified
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <span className="neo-badge" style={{ background: '#FFEB3B' }}>
+              <Sparkles className="w-3.5 h-3.5" style={{ strokeWidth: 2.5 }} /> Student Dashboard
             </span>
-            <span style={{ color: '#94A3B8', fontSize: '0.85rem' }}>
-              AWS Cognito & RDS MySQL Active
+            <span className="neo-badge" style={{ background: '#E8F5E9' }}>
+              AWS Serverless Active
             </span>
           </div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '6px' }}>
-            Welcome back, <span style={{ color: '#F8FAFC' }}>{user.name}</span>! 👋
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '8px', color: '#000000', textTransform: 'uppercase' }}>
+            WELCOME BACK, <span style={{ background: '#FFEB3B', padding: '0 8px', border: '2px solid #000' }}>{user.name}</span>! 👋
           </h1>
-          <p style={{ color: '#CBD5E1', maxWidth: '600px', fontSize: '0.95rem' }}>
-            Discover trending campus workshops, RSVP with instant seat reservation, and navigate venues seamlessly across ASIET KTU campus.
+          <p style={{ color: '#374151', maxWidth: '650px', fontSize: '1rem', fontWeight: 600, lineHeight: 1.5 }}>
+            Explore live KTU campus events, RSVP with instant seat reservation, and navigate indoor/outdoor waypoints across ASIET campus.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <Button variant="primary" size="md">
-            <Sparkles className="w-4 h-4" />
-            <span>Discover Events</span>
+            <Flame className="w-4 h-4" style={{ fill: '#000' }} /> Explore Map
+          </Button>
+          <Button variant="secondary" size="md">
+            My RSVPs ({upcomingEvents.length})
           </Button>
         </div>
       </div>
 
-      {/* Search Bar & Filter Chips (Section 3.2) */}
-      <div style={{ marginBottom: '32px' }}>
-        <div style={{
-          position: 'relative',
-          marginBottom: '16px'
-        }}>
-          <Search className="w-5 h-5 text-slate-400" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+      {/* Neobrutalist Search & Filter Controls (Section 3.B) */}
+      <div style={{
+        background: '#FFFFFF',
+        border: '3px solid #000000',
+        boxShadow: '4px 4px 0px 0px #000000',
+        borderRadius: '12px',
+        padding: '24px',
+        marginBottom: '36px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+      }}>
+        {/* Full-width Search Input */}
+        <div style={{ position: 'relative' }}>
+          <Search className="w-5 h-5" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#000000', strokeWidth: 2.5 }} />
           <input
             type="text"
-            placeholder="Search events by title, club name, or keyword..."
+            placeholder="Search by event title, technical club, or faculty coordinator..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="input-field"
             style={{
-              paddingLeft: '48px',
-              height: '52px',
-              fontSize: '1rem',
-              background: 'rgba(30, 41, 59, 0.7)',
-              borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.12)'
+              width: '100%',
+              padding: '14px 16px 14px 48px',
+              background: '#FFFFFF',
+              border: '2px solid #000000',
+              borderRadius: '8px',
+              color: '#000000',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              boxShadow: '2px 2px 0px 0px #000000',
+              transition: 'all 0.15s ease',
+              outline: 'none'
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.background = '#FFFDE7';
+              e.currentTarget.style.boxShadow = '4px 4px 0px 0px #000000';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.background = '#FFFFFF';
+              e.currentTarget.style.boxShadow = '2px 2px 0px 0px #000000';
             }}
           />
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#94A3B8', fontSize: '0.85rem', marginRight: '4px', fontWeight: 600 }}>
-            <Filter className="w-4 h-4 text-[#06B6D4]" />
-            <span>Category:</span>
-          </div>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              style={{
-                padding: '6px 16px',
-                borderRadius: '99px',
-                border: 'none',
-                background: selectedCategory === cat ? '#06B6D4' : 'rgba(255,255,255,0.06)',
-                color: selectedCategory === cat ? '#000' : '#94A3B8',
-                fontWeight: selectedCategory === cat ? 700 : 500,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: selectedCategory === cat ? '0 0 15px rgba(6,182,212,0.4)' : 'none'
-              }}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Category Pills */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 800, fontSize: '0.85rem', color: '#000', textTransform: 'uppercase', marginRight: '8px' }}>
+            <Filter className="w-4 h-4" style={{ strokeWidth: 2.5 }} /> Categories:
+          </span>
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  textTransform: 'uppercase',
+                  border: '2px solid #000000',
+                  background: isActive ? '#000000' : '#FFFFFF',
+                  color: isActive ? '#FFFFFF' : '#000000',
+                  boxShadow: isActive ? '4px 4px 0px 0px #FFEB3B' : '2px 2px 0px 0px #000000',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = '#FFEB3B';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '4px 4px 0px 0px #000000';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) {
+                    e.currentTarget.style.background = '#FFFFFF';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '2px 2px 0px 0px #000000';
+                  }
+                }}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Section Title */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Flame className="w-6 h-6 text-[#06B6D4]" />
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700 }}>
-            {selectedCategory === 'All' ? 'Trending Campus Events' : `${selectedCategory} Events`}
-          </h2>
-        </div>
-        <span style={{ fontSize: '0.85rem', color: '#94A3B8' }}>
-          Showing {filteredEvents.length} events
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase' }}>
+          UPCOMING CAMPUS EVENTS ({filteredEvents.length})
+        </h2>
+        <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#4B5563', textTransform: 'uppercase' }}>
+          Real-time DynamoDB Concurrency
         </span>
       </div>
 
-      {/* Events Grid */}
+      {/* Events Grid — Neobrutalist Cards */}
       {filteredEvents.length === 0 ? (
-        <div className="glass-card" style={{ padding: '48px', textAlign: 'center', color: '#94A3B8' }}>
-          <h3 style={{ fontSize: '1.2rem', color: '#F8FAFC', marginBottom: '8px' }}>
-            No events match your search criteria
+        <div style={{
+          background: '#FFFFFF',
+          border: '3px solid #000000',
+          boxShadow: '6px 6px 0px 0px #000000',
+          borderRadius: '12px',
+          padding: '48px 24px',
+          textAlign: 'center'
+        }}>
+          <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#000', textTransform: 'uppercase', marginBottom: '8px' }}>
+            No Events Match Your Search
           </h3>
-          <p style={{ fontSize: '0.9rem', marginBottom: '20px' }}>
-            Try resetting your filters or searching with a different keyword.
+          <p style={{ color: '#4B5563', fontWeight: 600, marginBottom: '20px' }}>
+            Try selecting another category or searching for general keywords like "KTU" or "Summit".
           </p>
-          <Button variant="secondary" size="md" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}>
-            <span>Clear Filters</span>
+          <Button variant="primary" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}>
+            Reset Filters
           </Button>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '24px'
-        }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '28px' }}>
           {filteredEvents.map((evt) => (
-            <div key={evt.id} className="glass-card" style={{
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              background: 'rgba(30, 41, 59, 0.7)'
-            }}>
-              <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
+            <div
+              key={evt.id}
+              style={{
+                background: '#FFFFFF',
+                border: '3px solid #000000',
+                boxShadow: '6px 6px 0px 0px #000000',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.15s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '8px 8px 0px 0px #000000';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '6px 6px 0px 0px #000000';
+              }}
+            >
+              {/* Card Image Header */}
+              <div style={{ height: '180px', position: 'relative', overflow: 'hidden', borderBottom: '3px solid #000000' }}>
                 <img
                   src={evt.image}
                   alt={evt.title}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                <span style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  background: 'rgba(11, 15, 25, 0.85)',
-                  backdropFilter: 'blur(10px)',
-                  color: '#06B6D4',
-                  fontWeight: 700,
-                  fontSize: '0.75rem',
-                  padding: '4px 10px',
-                  borderRadius: '99px',
-                  border: '1px solid rgba(6,182,212,0.3)'
-                }}>
-                  {evt.category}
-                </span>
+                <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', gap: '6px' }}>
+                  <span className="neo-badge" style={{ background: evt.badgeBg }}>
+                    {evt.category}
+                  </span>
+                  {evt.featured && (
+                    <span className="neo-badge" style={{ background: '#FFE0B2' }}>
+                      🔥 Featured
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#818CF8', marginBottom: '4px' }}>
+              {/* Card Body */}
+              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#4F46E5', textTransform: 'uppercase' }}>
                   {evt.club}
-                </span>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '12px', color: '#F8FAFC', lineHeight: '1.3' }}>
+                </div>
+
+                <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', lineHeight: 1.25 }}>
                   {evt.title}
                 </h3>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px', color: '#94A3B8', fontSize: '0.85rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem', color: '#374151', fontWeight: 700, marginTop: '4px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Clock className="w-4 h-4 text-[#06B6D4]" />
+                    <Clock className="w-4 h-4" style={{ color: '#2196F3', strokeWidth: 2.5 }} />
                     <span>{evt.date}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <MapPin className="w-4 h-4 text-[#06B6D4]" />
+                    <MapPin className="w-4 h-4" style={{ color: '#EF4444', strokeWidth: 2.5 }} />
                     <span>{evt.location}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Users className="w-4 h-4 text-[#10B981]" />
-                    <span style={{ color: '#10B981', fontWeight: 600 }}>{evt.seats}</span>
                   </div>
                 </div>
 
-                <Button variant="primary" size="md" style={{ width: '100%' }}>
-                  <span>Instant RSVP</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
+                {/* Card Footer Action */}
+                <div style={{
+                  marginTop: 'auto',
+                  paddingTop: '16px',
+                  borderTop: '2px solid #E5E7EB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px'
+                }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#10B981', background: '#E8F5E9', padding: '4px 10px', borderRadius: '6px', border: '1.5px solid #000' }}>
+                    {evt.seats}
+                  </span>
+                  <Button variant="primary" size="sm" style={{ padding: '8px 16px' }}>
+                    RSVP Now <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           ))}

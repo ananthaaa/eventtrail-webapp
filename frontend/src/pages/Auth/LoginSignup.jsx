@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button';
-import { Input } from '../../components/common/Input';
 import { Modal } from '../../components/common/Modal';
-import { ShieldCheck, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, ArrowLeft } from 'lucide-react';
 
 export const LoginSignup = () => {
   const { login, signup } = useAuth();
@@ -19,7 +18,7 @@ export const LoginSignup = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('Student');
-  const [department, setDepartment] = useState('MCA');
+  const [department, setDepartment] = useState('Computer Science');
 
   // OTP Modal State
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -36,7 +35,6 @@ export const LoginSignup = () => {
         await login(email, password);
         navigate('/home');
       } else {
-        // Sign up flow
         await signup({ email, password, name, role, department });
         setIsOtpModalOpen(true);
       }
@@ -53,12 +51,9 @@ export const LoginSignup = () => {
     setLoading(true);
 
     try {
-      // In mock/test mode or standard demo, any 6-digit OTP validates cleanly
       if (otpCode.length < 4) {
         throw new Error('Please enter a valid verification code.');
       }
-      
-      // Complete registration and log user in automatically
       await login(email, password);
       setIsOtpModalOpen(false);
       navigate('/home');
@@ -76,234 +71,276 @@ export const LoginSignup = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
-      background: 'radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.15) 0%, transparent 60%)'
+      background: '#FAF9F6'
     }}>
-      <div className="glass-card" style={{
+      <div style={{
         width: '100%',
-        maxWidth: '460px',
+        maxWidth: '480px',
         padding: '36px',
-        borderRadius: '24px',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.7), 0 0 40px rgba(99, 102, 241, 0.2)'
+        background: '#FFFFFF',
+        border: '3px solid #000000',
+        boxShadow: '8px 8px 0px 0px #000000',
+        borderRadius: '16px'
       }}>
+        {/* Back Link */}
+        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 800, fontSize: '0.85rem', color: '#000', textTransform: 'uppercase', marginBottom: '20px' }}>
+          <ArrowLeft className="w-4 h-4" style={{ strokeWidth: 2.5 }} /> Back to Home
+        </Link>
+
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '16px',
-            background: 'linear-gradient(135deg, #6366F1 0%, #06B6D4 100%)',
+            width: '60px',
+            height: '60px',
+            borderRadius: '12px',
+            background: '#FFEB3B',
+            border: '3px solid #000000',
+            boxShadow: '4px 4px 0px 0px #000000',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '16px',
-            boxShadow: '0 0 25px rgba(99, 102, 241, 0.5)'
+            fontWeight: 900,
+            fontSize: '1.75rem',
+            color: '#000000',
+            fontFamily: 'var(--font-heading)'
           }}>
-            <Sparkles className="w-7 h-7 text-white" />
+            ET
           </div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '6px' }}>
-            Event<span style={{ color: '#06B6D4' }}>Trail</span>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>
+            Event Trail Portal
           </h1>
-          <p style={{ color: '#94A3B8', fontSize: '0.9rem' }}>
-            Campus Community & Event Discovery Platform
+          <p style={{ color: '#4B5563', fontSize: '0.9rem', fontWeight: 600, marginTop: '4px' }}>
+            {activeTab === 'login' ? 'Sign in to access your campus dashboard' : 'Create an ASIET campus account'}
           </p>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Tab Selection */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          background: 'rgba(15, 23, 42, 0.8)',
-          padding: '6px',
-          borderRadius: '14px',
-          marginBottom: '24px',
-          border: '1px solid rgba(255,255,255,0.08)'
+          gap: '12px',
+          marginBottom: '28px'
         }}>
           <button
             type="button"
             onClick={() => { setActiveTab('login'); setError(''); }}
             style={{
-              padding: '10px',
-              borderRadius: '10px',
-              border: 'none',
-              background: activeTab === 'login' ? '#6366F1' : 'transparent',
-              color: activeTab === 'login' ? '#fff' : '#94A3B8',
-              fontWeight: 700,
+              padding: '12px',
+              borderRadius: '8px',
+              fontWeight: 800,
               fontSize: '0.9rem',
+              textTransform: 'uppercase',
+              border: '2px solid #000000',
+              background: activeTab === 'login' ? '#FFEB3B' : '#FFFFFF',
+              color: '#000000',
+              boxShadow: activeTab === 'login' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.15s ease'
             }}
           >
-            Sign In
+            Log In
           </button>
           <button
             type="button"
             onClick={() => { setActiveTab('signup'); setError(''); }}
             style={{
-              padding: '10px',
-              borderRadius: '10px',
-              border: 'none',
-              background: activeTab === 'signup' ? '#06B6D4' : 'transparent',
-              color: activeTab === 'signup' ? '#fff' : '#94A3B8',
-              fontWeight: 700,
+              padding: '12px',
+              borderRadius: '8px',
+              fontWeight: 800,
               fontSize: '0.9rem',
+              textTransform: 'uppercase',
+              border: '2px solid #000000',
+              background: activeTab === 'signup' ? '#E8F5E9' : '#FFFFFF',
+              color: '#000000',
+              boxShadow: activeTab === 'signup' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.15s ease'
             }}
           >
-            Create Account
+            Sign Up
           </button>
         </div>
 
         {/* Error Alert */}
         {error && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            color: '#FCA5A5',
-            padding: '12px 16px',
-            borderRadius: '12px',
-            marginBottom: '20px',
+            padding: '14px',
+            borderRadius: '8px',
+            background: '#FFCDD2',
+            border: '2px solid #000000',
+            boxShadow: '2px 2px 0px 0px #000000',
+            color: '#991B1B',
             fontSize: '0.85rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
+            fontWeight: 700,
+            marginBottom: '20px',
+            textAlign: 'center'
           }}>
-            <ShieldCheck className="w-5 h-5 flex-shrink-0 text-[#EF4444]" />
-            <span>{error}</span>
+            {error}
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleAuthSubmit}>
+        {/* Auth Form */}
+        <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          
           {activeTab === 'signup' && (
             <>
-              <Input
-                label="Full Name"
-                name="name"
-                type="text"
-                placeholder="e.g. Anantha Krishnan"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <Input
-                  label="Role Group"
-                  name="role"
-                  type="select"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  options={[
-                    { label: 'Student', value: 'Student' },
-                    { label: 'Faculty', value: 'Faculty' },
-                    { label: 'Club Admin', value: 'ClubOrganizer' }
-                  ]}
-                />
-                <Input
-                  label="Department"
-                  name="department"
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Full Name</label>
+                <input
                   type="text"
-                  placeholder="e.g. MCA / CS"
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
+                  required
+                  placeholder="Anantha Krishnan"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="input-field"
                 />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Role</label>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="input-field"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="Student">Student</option>
+                    <option value="ClubOrganizer">Organizer</option>
+                    <option value="Faculty">Faculty</option>
+                    <option value="Administrator">Admin</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Department</label>
+                  <select
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    className="input-field"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="Computer Science">CSE / MCA</option>
+                    <option value="Electronics">ECE</option>
+                    <option value="Electrical">EEE</option>
+                    <option value="Mechanical">ME</option>
+                    <option value="Civil">CE</option>
+                  </select>
+                </div>
               </div>
             </>
           )}
 
-          <Input
-            label="Campus Email Address"
-            name="email"
-            type="email"
-            placeholder="student@asiet.ac.in"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Campus Email</label>
+            <input
+              type="email"
+              required
+              placeholder="student@asiet.ac.in"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Password</label>
+            <input
+              type="password"
+              required
+              placeholder="••••••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+            />
+          </div>
 
           <Button
             type="submit"
-            variant={activeTab === 'login' ? 'primary' : 'primary'}
+            variant="primary"
             size="lg"
             isLoading={loading}
-            style={{ width: '100%', marginTop: '8px' }}
+            style={{ width: '100%', marginTop: '12px', padding: '16px', fontSize: '1rem' }}
           >
-            {activeTab === 'login' ? 'Sign In to CampusPulse' : 'Register Account'}
+            {activeTab === 'login' ? 'Sign In to Portal' : 'Create Free Account'}
           </Button>
+
         </form>
 
-        {/* Footer Info */}
-        <div style={{ marginTop: '24px', textAlign: 'center', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
-          <p style={{ fontSize: '0.75rem', color: '#64748B' }}>
-            Protected by AWS Cognito User Pools & Single Sign-On.
-            <br />ASIET KTU Campus Community Platform.
-          </p>
+        {/* Demo Credentials Hint */}
+        <div style={{
+          marginTop: '24px',
+          padding: '16px',
+          background: '#FFFDE7',
+          border: '2px solid #000000',
+          boxShadow: '2px 2px 0px 0px #000000',
+          borderRadius: '8px',
+          fontSize: '0.8rem',
+          color: '#374151',
+          fontWeight: 700,
+          textAlign: 'center'
+        }}>
+          💡 <span style={{ color: '#000', fontWeight: 800, textTransform: 'uppercase' }}>Demo Access:</span> You can sign in with any valid email format or register a new mock account instantly.
         </div>
+
       </div>
 
       {/* OTP Verification Modal */}
       <Modal
         isOpen={isOtpModalOpen}
         onClose={() => setIsOtpModalOpen(false)}
-        title="Verify Campus Email"
+        title="Cognito Email Verification"
       >
-        <div style={{ textAlign: 'center', padding: '10px 0' }}>
+        <div style={{ textAlign: 'center', padding: '12px 0' }}>
           <div style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '50%',
-            background: 'rgba(16, 185, 129, 0.15)',
-            color: '#10B981',
+            width: '56px',
+            height: '56px',
+            borderRadius: '12px',
+            background: '#E8F5E9',
+            border: '2px solid #000',
+            boxShadow: '2px 2px 0px 0px #000',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginBottom: '16px',
-            border: '1px solid rgba(16, 185, 129, 0.3)'
+            marginBottom: '16px'
           }}>
-            <CheckCircle2 className="w-6 h-6" />
+            <ShieldCheck className="w-8 h-8" style={{ color: '#10B981', strokeWidth: 2.5 }} />
           </div>
-          <p style={{ fontSize: '0.9rem', color: '#CBD5E1', marginBottom: '20px' }}>
-            We sent a verification code to <strong style={{ color: '#F8FAFC' }}>{email}</strong>. Enter the OTP code below to activate your AWS Cognito identity.
+
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#000', textTransform: 'uppercase', marginBottom: '8px' }}>
+            Enter 6-Digit OTP Code
+          </h3>
+          <p style={{ color: '#4B5563', fontSize: '0.9rem', fontWeight: 600, marginBottom: '20px' }}>
+            We sent a verification code to <strong style={{ color: '#000' }}>{email}</strong>. Enter it below to activate your account.
           </p>
 
           {otpError && (
-            <p style={{ color: '#EF4444', fontSize: '0.8rem', marginBottom: '12px' }}>
+            <div style={{ padding: '10px', background: '#FFCDD2', border: '2px solid #000', color: '#991B1B', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '16px' }}>
               {otpError}
-            </p>
+            </div>
           )}
 
-          <form onSubmit={handleOtpVerify}>
-            <Input
-              name="otp"
+          <form onSubmit={handleOtpVerify} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <input
               type="text"
-              placeholder="Enter 6-digit OTP (e.g. 123456)"
+              required
+              maxLength={6}
+              placeholder="1 2 3 4 5 6"
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value)}
-              style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem', fontWeight: 700 }}
-              required
+              className="input-field"
+              style={{ textAlign: 'center', fontSize: '1.4rem', letterSpacing: '6px', fontWeight: 900 }}
             />
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              isLoading={loading}
-              style={{ width: '100%', marginTop: '12px', background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)' }}
-            >
-              Verify & Complete Registration
+            <Button type="submit" variant="mint" size="lg" isLoading={loading} style={{ width: '100%', padding: '14px' }}>
+              Verify & Complete Signup
             </Button>
           </form>
+
+          <p style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 700, marginTop: '16px' }}>
+            In test/demo mode, enter any 6 digits (e.g. 123456) to proceed.
+          </p>
         </div>
       </Modal>
     </div>

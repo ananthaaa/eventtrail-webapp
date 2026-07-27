@@ -3,54 +3,135 @@ import { Loader2 } from 'lucide-react';
 
 export const Button = ({
   children,
-  variant = 'primary', // 'primary' | 'secondary' | 'danger' | 'ghost'
+  variant = 'primary', // 'primary' | 'secondary' | 'mint' | 'blue' | 'danger' | 'ghost'
   size = 'md', // 'sm' | 'md' | 'lg'
   isLoading = false,
   disabled = false,
   className = '',
   onClick,
   type = 'button',
+  style = {},
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0B0F19] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
-  
-  const variants = {
-    primary: 'bg-[#6366F1] hover:bg-[#4F46E5] text-white shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 active:translate-y-0 focus:ring-[#6366F1]',
-    secondary: 'bg-[#1E293B]/80 hover:bg-[#334155] text-slate-200 border border-white/10 hover:border-white/20 hover:-translate-y-0.5 active:translate-y-0 focus:ring-slate-400',
-    danger: 'bg-[#EF4444] hover:bg-[#DC2626] text-white shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:-translate-y-0.5 active:translate-y-0 focus:ring-[#EF4444]',
-    ghost: 'bg-transparent hover:bg-white/5 text-slate-300 hover:text-white focus:ring-slate-400'
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'primary':
+        return {
+          background: '#FFEB3B', // Pastel Accent Yellow
+          color: '#000000',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+        };
+      case 'secondary':
+        return {
+          background: '#FFE0B2', // Pastel Peach
+          color: '#000000',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+        };
+      case 'mint':
+        return {
+          background: '#E8F5E9', // Pastel Mint Green
+          color: '#000000',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+        };
+      case 'blue':
+        return {
+          background: '#E3F2FD', // Pastel Blue
+          color: '#000000',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+        };
+      case 'danger':
+        return {
+          background: '#FFCDD2', // Pastel Red / Pink
+          color: '#000000',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+        };
+      case 'ghost':
+        return {
+          background: 'transparent',
+          color: '#000000',
+          border: '2px solid transparent',
+          boxShadow: 'none',
+        };
+      default:
+        return {
+          background: '#FFEB3B',
+          color: '#000000',
+          border: '2px solid #000000',
+          boxShadow: '4px 4px 0px 0px #000000',
+        };
+    }
   };
 
-  const sizes = {
-    sm: 'px-3 py-1.5 text-xs gap-1.5',
-    md: 'px-5 py-2.5 text-sm gap-2',
-    lg: 'px-6 py-3.5 text-base gap-2.5'
+  const getPadding = () => {
+    switch (size) {
+      case 'sm':
+        return '6px 14px';
+      case 'lg':
+        return '14px 28px';
+      default:
+        return '10px 22px';
+    }
   };
+
+  const vStyles = getVariantStyles();
 
   return (
     <button
       type={type}
       disabled={disabled || isLoading}
       onClick={onClick}
-      className={`${baseStyles} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
+      className={`neo-button ${className}`}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontWeight: 600,
-        borderRadius: '12px',
-        border: variant === 'secondary' ? '1px solid rgba(255,255,255,0.15)' : 'none',
-        background: variant === 'primary' ? 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)' : undefined,
-        color: '#fff',
+        gap: '8px',
+        fontWeight: 800,
+        fontSize: size === 'sm' ? '0.8rem' : size === 'lg' ? '1.05rem' : '0.9rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px',
+        padding: getPadding(),
+        borderRadius: '8px',
         cursor: (disabled || isLoading) ? 'not-allowed' : 'pointer',
         opacity: (disabled || isLoading) ? 0.6 : 1,
-        transition: 'all 0.2s ease',
+        transition: 'all 0.15s ease',
+        ...vStyles,
+        ...style,
+      }}
+      onMouseEnter={(e) => {
+        if (!disabled && !isLoading && variant !== 'ghost') {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '6px 6px 0px 0px #000000';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled && !isLoading && variant !== 'ghost') {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = vStyles.boxShadow;
+        }
+      }}
+      onMouseDown={(e) => {
+        if (!disabled && !isLoading && variant !== 'ghost') {
+          e.currentTarget.style.transform = 'translate(2px, 2px)';
+          e.currentTarget.style.boxShadow = '2px 2px 0px 0px #000000';
+        }
+      }}
+      onMouseUp={(e) => {
+        if (!disabled && !isLoading && variant !== 'ghost') {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '6px 6px 0px 0px #000000';
+        }
       }}
       {...props}
     >
       {isLoading ? (
         <>
-          <Loader2 className="w-4 h-4 animate-spin" style={{ animation: 'spin 1s linear infinite', marginRight: '8px' }} />
+          <Loader2 className="w-4 h-4 animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
           <span>Processing...</span>
         </>
       ) : (
