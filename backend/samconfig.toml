@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "eventtrail-module1-stack"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-ap-south-1"
+s3_prefix = "eventtrail-module1"
+region = "ap-south-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM CAPABILITY_NAMED_IAM"
+parameter_overrides = "Environment=dev"
+image_repositories = []

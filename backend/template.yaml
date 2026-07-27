@@ -1,0 +1,264 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  EventTrail (CampusPulse) — Module 1: Foundation, Infrastructure & Auth
+  Serverless application architecture deployed in ap-south-1 with $0 cost AWS Free Tier optimization.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment
+  RdsSecretArn:
+    Type: String
+    Default: "arn:aws:secretsmanager:ap-south-1:123456789012:secret:eventtrail/rds-credentials"
+    Description: ARN of the AWS Secrets Manager secret storing RDS MySQL db.t3.micro credentials
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 256
+    Runtime: nodejs20.x
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        ENV: !Ref Environment
+        USER_POOL_ID: !Ref EventTrailUserPool
+        USER_POOL_CLIENT_ID: !Ref EventTrailUserPoolClient
+        RDS_SECRET_ARN: !Ref RdsSecretArn
+        WAITLIST_TABLE: !Ref WaitlistQueueTable
+        NOTIFICATIONS_TABLE: !Ref NotificationsLogTable
+        SEAT_COUNTERS_TABLE: !Ref SeatCountersTable
+
+Resources:
+  # ==========================================
+  # 1. COGNITO AUTHENTICATION USER POOL & CLIENT
+  # ==========================================
+  EventTrailUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub eventtrail-user-pool-${Environment}
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+      Schema:
+        - Name: email
+          Required: true
+          Mutable: false
+        - Name: name
+          Required: true
+          Mutable: true
+
+  EventTrailUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub eventtrail-react-client-${Environment}
+      UserPoolId: !Ref EventTrailUserPool
+      GenerateSecret: false # False for Single Page Applications (React SPA)
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      PreventUserExistenceErrors: ENABLED
+
+  # User Groups for Role-Based Access Control
+  StudentGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: Student
+      Description: Campus students browsing, RSVPing, and navigating events
+      UserPoolId: !Ref EventTrailUserPool
+
+  FacultyGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: Faculty
+      Description: Campus faculty members with event creation privileges
+      UserPoolId: !Ref EventTrailUserPool
+
+  ClubOrganizerGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: ClubOrganizer
+      Description: Club leaders managing events, waitlists, and announcements
+      UserPoolId: !Ref EventTrailUserPool
+
+  AdministratorGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: Administrator
+      Description: Platform admins approving events and managing campus map venues
+      UserPoolId: !Ref EventTrailUserPool
+
+  # ==========================================
+  # 2. DYNAMODB NOSQL TABLES ($0 Cost On-Demand)
+  # ==========================================
+  WaitlistQueueTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub eventtrail-waitlist-queue-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: event_id
+          AttributeType: S
+        - AttributeName: position
+          AttributeType: N
+      KeySchema:
+        - AttributeName: event_id
+          KeyType: HASH
+        - AttributeName: position
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  NotificationsLogTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub eventtrail-notifications-log-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: user_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema:
+        - AttributeName: user_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+
+  SeatCountersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub eventtrail-seat-counters-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: event_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: event_id
+          KeyType: HASH
+
+  # ==========================================
+  # 3. API GATEWAY & COGNITO AUTHORIZER
+  # ==========================================
+  EventTrailApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key'"
+        AllowOrigin: "'*'"
+      Auth:
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt EventTrailUserPool.Arn
+            Identity:
+              Header: Authorization
+
+  # ==========================================
+  # 4. LAMBDA MICROSERVICES (MODULE 1)
+  # ==========================================
+  SignupFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/auth/
+      Handler: signup.handler
+      Description: Handles POST /auth/signup - Registers user in Cognito and RDS
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminSetUserPassword
+                - cognito-idp:AdminAddUserToGroup
+              Resource: !GetAtt EventTrailUserPool.Arn
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref RdsSecretArn
+      Events:
+        SignupApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EventTrailApi
+            Path: /auth/signup
+            Method: POST
+
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/auth/
+      Handler: login.handler
+      Description: Handles POST /auth/login - Authenticates against Cognito and returns JWT
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminInitiateAuth
+                - cognito-idp:InitiateAuth
+              Resource: !GetAtt EventTrailUserPool.Arn
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref RdsSecretArn
+      Events:
+        LoginApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EventTrailApi
+            Path: /auth/login
+            Method: POST
+
+  MeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/handlers/users/
+      Handler: me.handler
+      Description: Handles GET and PUT /users/me - Retrieves/updates authenticated user profile
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: !Ref RdsSecretArn
+      Events:
+        GetMeApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EventTrailApi
+            Path: /users/me
+            Method: GET
+            Auth:
+              Authorizer: CognitoAuthorizer
+        PutMeApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EventTrailApi
+            Path: /users/me
+            Method: PUT
+            Auth:
+              Authorizer: CognitoAuthorizer
+
+Outputs:
+  ApiGatewayUrl:
+    Description: Base URL of API Gateway endpoint for EventTrail Module 1
+    Value: !Sub "https://${EventTrailApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}"
+  UserPoolId:
+    Description: AWS Cognito User Pool ID
+    Value: !Ref EventTrailUserPool
+  UserPoolClientId:
+    Description: AWS Cognito User Pool Client ID
+    Value: !Ref EventTrailUserPoolClient

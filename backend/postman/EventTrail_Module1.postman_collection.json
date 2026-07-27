@@ -1,0 +1,192 @@
+{
+  "info": {
+    "_postman_id": "eventtrail-module1-auth",
+    "name": "EventTrail — Module 1: Foundation, Infrastructure & Auth",
+    "description": "Postman integration test collection for EventTrail Module 1 API Gateway and Lambda endpoints in ap-south-1.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Sign Up User (Student)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student.mca@asiet.ac.in\",\n  \"password\": \"DidaskoCloud2026!\",\n  \"name\": \"Campus Student\",\n  \"role\": \"Student\",\n  \"department\": \"MCA\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/signup",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 Created or 409 Conflict', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Log In User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student.mca@asiet.ac.in\",\n  \"password\": \"DidaskoCloud2026!\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Returns JWT Access and ID tokens', function () {",
+              "    pm.expect(jsonData.tokens.id_token).to.not.be.empty;",
+              "    pm.collectionVariables.set('jwt_token', jsonData.tokens.id_token);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Get My Profile (GET /users/me)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/users/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "me"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Profile email matches login email', function () {",
+              "    pm.expect(jsonData.user.email).to.eql('student.mca@asiet.ac.in');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Update My Profile (PUT /users/me)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{jwt_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Campus Student Updated\",\n  \"department\": \"MCA (Cloud Systems)\",\n  \"interests\": [\"AWS Serverless\", \"React UI\", \"Campus Events\"]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "me"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Profile updated correctly', function () {",
+              "    pm.expect(jsonData.user.name).to.eql('Campus Student Updated');",
+              "    pm.expect(jsonData.user.interests).to.include('AWS Serverless');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}
