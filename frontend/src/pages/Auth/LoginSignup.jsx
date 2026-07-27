@@ -3,22 +3,24 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button';
 import { Modal } from '../../components/common/Modal';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, Eye, EyeOff, Mail, Lock, User, IdCard } from 'lucide-react';
 
 export const LoginSignup = () => {
   const { login, signup } = useAuth();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup'
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  // Navigation / View state
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
+  const [loginTab, setLoginTab] = useState('Student'); // 'Student' | 'Admin'
+  const [showPassword, setShowPassword] = useState(false);
   
   // Form State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('Student');
-  const [department, setDepartment] = useState('Computer Science');
+  const [studentId, setStudentId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // OTP Modal State
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -31,11 +33,19 @@ export const LoginSignup = () => {
     setLoading(true);
 
     try {
-      if (activeTab === 'login') {
+      if (authMode === 'login') {
         await login(email, password);
         navigate('/home');
       } else {
-        await signup({ email, password, name, role, department });
+        // Sign up flow
+        await signup({ 
+          email, 
+          password, 
+          name, 
+          role: 'Student', 
+          department: 'Computer Science',
+          studentId 
+        });
         setIsOtpModalOpen(true);
       }
     } catch (err) {
@@ -71,101 +81,105 @@ export const LoginSignup = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '24px',
-      background: '#FAF9F6'
+      background: '#FAF9F6',
+      fontFamily: 'var(--font-body)'
     }}>
       <div style={{
         width: '100%',
-        maxWidth: '480px',
+        maxWidth: '460px',
         padding: '36px',
         background: '#FFFFFF',
         border: '3px solid #000000',
         boxShadow: '8px 8px 0px 0px #000000',
-        borderRadius: '16px'
+        borderRadius: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       }}>
-        {/* Back Link */}
-        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 800, fontSize: '0.85rem', color: '#000', textTransform: 'uppercase', marginBottom: '20px' }}>
-          <ArrowLeft className="w-4 h-4" style={{ strokeWidth: 2.5 }} /> Back to Home
-        </Link>
-
-        {/* Brand Header */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{
-            width: '60px',
-            height: '60px',
-            borderRadius: '12px',
-            background: '#FFEB3B',
-            border: '3px solid #000000',
-            boxShadow: '4px 4px 0px 0px #000000',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '16px',
-            fontWeight: 900,
-            fontSize: '1.75rem',
-            color: '#000000',
-            fontFamily: 'var(--font-heading)'
-          }}>
-            ET
-          </div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '-0.5px' }}>
-            Event Trail Portal
-          </h1>
-          <p style={{ color: '#4B5563', fontSize: '0.9rem', fontWeight: 600, marginTop: '4px' }}>
-            {activeTab === 'login' ? 'Sign in to access your campus dashboard' : 'Create an ASIET campus account'}
-          </p>
-        </div>
-
-        {/* Tab Selection */}
+        
+        {/* Logo Block — Exact Vercel Reference */}
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '12px',
-          marginBottom: '28px'
+          width: '54px',
+          height: '54px',
+          borderRadius: '10px',
+          background: '#FFEB3B',
+          border: '2px solid #000000',
+          boxShadow: '2px 2px 0px 0px #000000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '20px',
+          fontWeight: 900,
+          fontSize: '1.6rem',
+          color: '#000000',
+          fontFamily: 'var(--font-heading)'
         }}>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('login'); setError(''); }}
-            style={{
-              padding: '12px',
-              borderRadius: '8px',
-              fontWeight: 800,
-              fontSize: '0.9rem',
-              textTransform: 'uppercase',
-              border: '2px solid #000000',
-              background: activeTab === 'login' ? '#FFEB3B' : '#FFFFFF',
-              color: '#000000',
-              boxShadow: activeTab === 'login' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            Log In
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab('signup'); setError(''); }}
-            style={{
-              padding: '12px',
-              borderRadius: '8px',
-              fontWeight: 800,
-              fontSize: '0.9rem',
-              textTransform: 'uppercase',
-              border: '2px solid #000000',
-              background: activeTab === 'signup' ? '#E8F5E9' : '#FFFFFF',
-              color: '#000000',
-              boxShadow: activeTab === 'signup' ? '4px 4px 0px 0px #000000' : '2px 2px 0px 0px #000000',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            Sign Up
-          </button>
+          ET
         </div>
 
-        {/* Error Alert */}
+        {/* Dynamic Header & Subtitle */}
+        <h1 style={{ fontSize: '1.85rem', fontWeight: 900, color: '#000000', textTransform: 'uppercase', marginBottom: '4px', textAlign: 'center', letterSpacing: '-0.5px' }}>
+          {authMode === 'login' ? 'Welcome back' : 'Create Account'}
+        </h1>
+        <p style={{ color: '#4B5563', fontSize: '0.9rem', fontWeight: 600, marginBottom: '24px', textAlign: 'center' }}>
+          {authMode === 'login' ? 'Sign in to your account' : 'Join thousands of students'}
+        </p>
+
+        {/* Student / Admin Tabs (Only shown in Login Mode) */}
+        {authMode === 'login' && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '10px',
+            width: '100%',
+            marginBottom: '24px'
+          }}>
+            <button
+              type="button"
+              onClick={() => { setLoginTab('Student'); setError(''); }}
+              style={{
+                padding: '10px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                textTransform: 'uppercase',
+                border: loginTab === 'Student' ? '2px solid #000000' : '2px solid transparent',
+                background: loginTab === 'Student' ? '#E8F5E9' : 'transparent',
+                color: '#000000',
+                boxShadow: loginTab === 'Student' ? '2px 2px 0px 0px #000000' : 'none',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              Student
+            </button>
+            <button
+              type="button"
+              onClick={() => { setLoginTab('Admin'); setError(''); }}
+              style={{
+                padding: '10px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                textTransform: 'uppercase',
+                border: loginTab === 'Admin' ? '2px solid #000000' : '2px solid transparent',
+                background: loginTab === 'Admin' ? '#E8F5E9' : 'transparent',
+                color: '#000000',
+                boxShadow: loginTab === 'Admin' ? '2px 2px 0px 0px #000000' : 'none',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              Admin
+            </button>
+          </div>
+        )}
+
+        {/* Error Alert Box */}
         {error && (
           <div style={{
-            padding: '14px',
+            width: '100%',
+            padding: '12px',
             borderRadius: '8px',
             background: '#FFCDD2',
             border: '2px solid #000000',
@@ -180,108 +194,272 @@ export const LoginSignup = () => {
           </div>
         )}
 
-        {/* Auth Form */}
-        <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Form */}
+        <form onSubmit={handleAuthSubmit} style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           
-          {activeTab === 'signup' && (
+          {/* Signup Specific Fields */}
+          {authMode === 'signup' && (
             <>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Full Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Anantha Krishnan"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="input-field"
-                />
+                <label htmlFor="signup-name" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Full Name
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <User className="w-4 h-4" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#4B5563', strokeWidth: 2.5 }} />
+                  <input
+                    id="signup-name"
+                    type="text"
+                    required
+                    placeholder="Alex Johnson"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px 12px 42px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '8px',
+                      color: '#000000',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      boxShadow: '2px 2px 0px 0px #000000',
+                      outline: 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.background = '#FFFDE7'}
+                    onBlur={(e) => e.currentTarget.style.background = '#FFFFFF'}
+                  />
+                </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Role</label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="input-field"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <option value="Student">Student</option>
-                    <option value="ClubOrganizer">Organizer</option>
-                    <option value="Faculty">Faculty</option>
-                    <option value="Administrator">Admin</option>
-                  </select>
+              <div>
+                <label htmlFor="signup-email" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Campus Email
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Mail className="w-4 h-4" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#4B5563', strokeWidth: 2.5 }} />
+                  <input
+                    id="signup-email"
+                    type="email"
+                    required
+                    placeholder="alex@campus.edu"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px 12px 42px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '8px',
+                      color: '#000000',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      boxShadow: '2px 2px 0px 0px #000000',
+                      outline: 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.background = '#FFFDE7'}
+                    onBlur={(e) => e.currentTarget.style.background = '#FFFFFF'}
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Department</label>
-                  <select
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="input-field"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <option value="Computer Science">CSE / MCA</option>
-                    <option value="Electronics">ECE</option>
-                    <option value="Electrical">EEE</option>
-                    <option value="Mechanical">ME</option>
-                    <option value="Civil">CE</option>
-                  </select>
+              <div>
+                <label htmlFor="signup-studentId" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Student ID
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <IdCard className="w-4 h-4" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#4B5563', strokeWidth: 2.5 }} />
+                  <input
+                    id="signup-studentId"
+                    type="text"
+                    required
+                    placeholder="STU-2024-0001"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px 12px 42px',
+                      background: '#FFFFFF',
+                      border: '2px solid #000000',
+                      borderRadius: '8px',
+                      color: '#000000',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      boxShadow: '2px 2px 0px 0px #000000',
+                      outline: 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.background = '#FFFDE7'}
+                    onBlur={(e) => e.currentTarget.style.background = '#FFFFFF'}
+                  />
                 </div>
               </div>
             </>
           )}
 
+          {/* Login Specific Email Field */}
+          {authMode === 'login' && (
+            <div>
+              <label htmlFor="login-email" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>
+                Email
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Mail className="w-4 h-4" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#4B5563', strokeWidth: 2.5 }} />
+                <input
+                  id="login-email"
+                  type="email"
+                  required
+                  placeholder={loginTab === 'Admin' ? 'admin@campus.edu' : 'student@campus.edu'}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px 12px 42px',
+                    background: '#FFFFFF',
+                    border: '2px solid #000000',
+                    borderRadius: '8px',
+                    color: '#000000',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    boxShadow: '2px 2px 0px 0px #000000',
+                    outline: 'none',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onFocus={(e) => e.currentTarget.style.background = '#FFFDE7'}
+                  onBlur={(e) => e.currentTarget.style.background = '#FFFFFF'}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Password Field (Common to Both) */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Campus Email</label>
-            <input
-              type="email"
-              required
-              placeholder="student@asiet.ac.in"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-            />
+            <label htmlFor={authMode === 'login' ? 'login-password' : 'signup-password'} style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>
+              Password
+            </label>
+            <div style={{ position: 'relative' }}>
+              <Lock className="w-4 h-4" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#4B5563', strokeWidth: 2.5 }} />
+              <input
+                id={authMode === 'login' ? 'login-password' : 'signup-password'}
+                type={showPassword ? 'text' : 'password'}
+                required
+                placeholder={authMode === 'login' ? '••••••••' : 'Min. 6 characters'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 42px 12px 42px',
+                  background: '#FFFFFF',
+                  border: '2px solid #000000',
+                  borderRadius: '8px',
+                  color: '#000000',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  boxShadow: '2px 2px 0px 0px #000000',
+                  outline: 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                onFocus={(e) => e.currentTarget.style.background = '#FFFDE7'}
+                onBlur={(e) => e.currentTarget.style.background = '#FFFFFF'}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" style={{ color: '#4B5563', strokeWidth: 2.5 }} />
+                ) : (
+                  <Eye className="w-4 h-4" style={{ color: '#4B5563', strokeWidth: 2.5 }} />
+                )}
+              </button>
+            </div>
           </div>
 
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#000', textTransform: 'uppercase', marginBottom: '6px' }}>Password</label>
-            <input
-              type="password"
-              required
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-field"
-            />
-          </div>
-
+          {/* Submit CTA Button */}
           <Button
             type="submit"
-            variant="primary"
+            variant={authMode === 'login' ? 'primary' : 'mint'}
             size="lg"
             isLoading={loading}
-            style={{ width: '100%', marginTop: '12px', padding: '16px', fontSize: '1rem' }}
+            style={{ width: '100%', marginTop: '8px', padding: '14px', fontSize: '0.95rem' }}
           >
-            {activeTab === 'login' ? 'Sign In to Portal' : 'Create Free Account'}
+            {authMode === 'login' ? 'Sign In' : 'Create Account'}
           </Button>
 
         </form>
 
-        {/* Demo Credentials Hint */}
-        <div style={{
-          marginTop: '24px',
-          padding: '16px',
-          background: '#FFFDE7',
-          border: '2px solid #000000',
-          boxShadow: '2px 2px 0px 0px #000000',
-          borderRadius: '8px',
-          fontSize: '0.8rem',
-          color: '#374151',
-          fontWeight: 700,
-          textAlign: 'center'
-        }}>
-          💡 <span style={{ color: '#000', fontWeight: 800, textTransform: 'uppercase' }}>Demo Access:</span> You can sign in with any valid email format or register a new mock account instantly.
+        {/* Footer Links Section */}
+        <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', width: '100%' }}>
+          
+          {/* Sign Up Link (Only visible in Student tab during login, or switch back during signup) */}
+          {authMode === 'login' && loginTab === 'Student' && (
+            <button
+              type="button"
+              onClick={() => { setAuthMode('signup'); setError(''); }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#000000',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                textTransform: 'uppercase'
+              }}
+            >
+              Don't have an account? Sign Up Free
+            </button>
+          )}
+
+          {authMode === 'signup' && (
+            <button
+              type="button"
+              onClick={() => { setAuthMode('login'); setError(''); }}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#000000',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                textTransform: 'uppercase'
+              }}
+            >
+              Already have an account? Sign In
+            </button>
+          )}
+
+          {/* Back to Home Link */}
+          <Link
+            to="/"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              color: '#4B5563',
+              fontWeight: 800,
+              fontSize: '0.85rem',
+              textDecoration: 'none',
+              marginTop: '4px'
+            }}
+          >
+            <ArrowLeft className="w-4 h-4" style={{ strokeWidth: 2.5 }} /> Back to home
+          </Link>
+
         </div>
 
       </div>
@@ -329,8 +507,19 @@ export const LoginSignup = () => {
               placeholder="1 2 3 4 5 6"
               value={otpCode}
               onChange={(e) => setOtpCode(e.target.value)}
-              className="input-field"
-              style={{ textAlign: 'center', fontSize: '1.4rem', letterSpacing: '6px', fontWeight: 900 }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#FFFFFF',
+                border: '2px solid #000000',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontSize: '1.4rem',
+                letterSpacing: '6px',
+                fontWeight: 900,
+                boxShadow: '2px 2px 0px 0px #000000',
+                outline: 'none'
+              }}
             />
 
             <Button type="submit" variant="mint" size="lg" isLoading={loading} style={{ width: '100%', padding: '14px' }}>
