@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Calendar, MapPin, Bookmark, User, LogOut, Compass } from 'lucide-react';
+import { Calendar, MapPin, Bookmark, Bell, User, LogOut, Compass } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
@@ -10,9 +10,10 @@ export const Navbar = () => {
   if (!user) return null;
 
   const navItems = [
-    { label: 'Explore', path: '/home', icon: Compass },
-    { label: 'Campus Map', path: '/map', icon: MapPin },
-    { label: 'My RSVPs', path: '/my-events', icon: Bookmark },
+    { label: 'Home', path: '/home', icon: Compass },
+    { label: 'Map', path: '/map', icon: MapPin },
+    { label: 'My Events', path: '/my-events', icon: Bookmark },
+    { label: 'Notifications', path: '/notifications', icon: Bell },
     { label: 'Profile', path: '/profile', icon: User },
   ];
 
@@ -24,7 +25,7 @@ export const Navbar = () => {
     <>
       {/* Top Desktop Navigation Bar */}
       <header className="glass-navbar" style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <Link to="/home" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
           <div style={{
             width: '36px',
             height: '36px',
@@ -40,7 +41,7 @@ export const Navbar = () => {
           }}>
             E
           </div>
-          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px', color: '#F8FAFC' }}>
             Event<span style={{ color: '#06B6D4' }}>Trail</span>
           </span>
           <span style={{
@@ -55,10 +56,10 @@ export const Navbar = () => {
           }}>
             {user.role}
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Nav Links */}
-        <nav style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+        <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname.startsWith(item.path);
@@ -76,7 +77,8 @@ export const Navbar = () => {
                   padding: '6px 12px',
                   borderRadius: '8px',
                   background: isActive ? 'rgba(255,255,255,0.08)' : 'transparent',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  textDecoration: 'none'
                 }}
               >
                 <Icon className="w-4 h-4" style={{ color: isActive ? '#06B6D4' : '#94A3B8' }} />
